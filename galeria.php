@@ -116,8 +116,10 @@
                     var price = document.getElementById('price').value;
                     var queryString = "?brand=" + brand;
                     queryString += "&id=" + d + "&price=" + price + "&brand=" + brand;
+                    if(d!=0){
                     ajaxRequest.open("GET", "delete.php" + queryString, true);
                     ajaxRequest.send(null);
+                    }
                     ajaxRequest.open("GET", "conexion.php" + queryString, true);
                     ajaxRequest.send(null);
                 }
