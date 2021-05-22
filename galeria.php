@@ -37,7 +37,7 @@
                     </div>
                     <br /><br />
                     <!-- Grid row -->
-                    
+
                 </section>
                 <!-- Section: Features v.4 -->
             </div>
@@ -47,48 +47,28 @@
             <script type="text/javascript" src="js/mdb.min.js"></script>
             <!-- Custom scripts -->
             <script type="text/javascript"></script>
-
+            <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
             <script type="text/javascript">
                 //Browser Support Code
-                function ajaxFunction(d=1) {
-                    var ajaxRequest;
-                    try {
-                        ajaxRequest = new XMLHttpRequest();
-                    } catch (e) {
-                        try {
-                            ajaxRequest = new ActiveXObject("Msxml2.XMLHTTP");
-                        } catch (e) {
-                            try {
-                                ajaxRequest = new ActiveXObject("Microsoft.XMLHTTP");
-                            } catch (e) {
-                                alert("Error en el buscador");
-                                return false;
-                            }
-                        }
-                    }
-
-                    ajaxRequest.onreadystatechange = function () {
-                        if (ajaxRequest.readyState == 4) {
-                            var ajaxDisplay = document.getElementById('ajaxDiv');
-                            ajaxDisplay.innerHTML = ajaxRequest.responseText;
-                        }
+                function add() {
+                    if ((brand == "" || model == "" || price == "") && d != 0) {
+                        alert("Llene todos los campos");
+                        return;
                     }
                     var brand = document.getElementById('brand').value;
                     var model = document.getElementById('model').value;
                     var price = document.getElementById('price').value;
                     var year = document.getElementById('year').value;
-                    if((brand==""||model==""||price=="") && d!=0){
-                        alert("Llene todos los campos");
-                        return;
-                    }
-                    var queryString = "?brand=" + brand;
-                    queryString += "&model=" + model + "&price=" + price + "&brand=" + brand+ "&year=" + year;
-                    ajaxRequest.open("GET", "insert.php" + queryString, true);
-                    ajaxRequest.send(null);
-                    ajaxRequest.open("GET", "conexion.php" + queryString, true);
-                    ajaxRequest.send(null);
+
+                    $.ajax({
+                        method: "GET",
+                        url: "insert.php",
+                        data: { "brand": brand, "price": price, "model": model, "year": year },
+                    }).done(function (data) {
+                        ajaxFunction();
+                    })
                 }
-                function delete_purchase(d) {
+                function ajaxFunction(d = 1) {
                     var ajaxRequest;
                     try {
                         ajaxRequest = new XMLHttpRequest();
@@ -111,59 +91,63 @@
                             ajaxDisplay.innerHTML = ajaxRequest.responseText;
                         }
                     }
-                    var brand = document.getElementById('brand').value;
-                    var model = document.getElementById('model').value;
-                    var price = document.getElementById('price').value;
                     var queryString = "?brand=" + brand;
-                    queryString += "&id=" + d + "&price=" + price + "&brand=" + brand;
-                    if(d!=0){
-                    ajaxRequest.open("GET", "delete.php" + queryString, true);
-                    ajaxRequest.send(null);
-                    }
                     ajaxRequest.open("GET", "conexion.php" + queryString, true);
                     ajaxRequest.send(null);
                 }
+                function delete_purchase(d) {
+                    if (d != 0) {
+                        $.ajax({
+                            method: "GET",
+                            url: "delete.php",
+                            data: { "id": d },
+                        }).done(function (data) {
+                            ajaxFunction();
+                        })
+                    }
+                }
             </script>
-<div  class="p-5 text-center ">
-            <div class="card">
-                <div class="card-header">
-                    <strong>Ingrese Nuevo Carro</strong>
+            <div class="p-5 text-center ">
+                <div class="card">
+                    <div class="card-header">
+                        <strong>Ingrese Nuevo Carro</strong>
+                    </div>
+                    <div class="card-body text-center">
+
+                        <form name='myForm'>
+                            <div class="row">
+                                <div class="d-inline col-lg-3">
+                                    <strong>Marca</strong>
+                                    <input class="form-control" type='text' id='brand' placeholder="Ejem. Ford" />
+                                </div>
+                                <div class="d-inline col-lg-3">
+                                    <strong>Modelo</strong>
+                                    <input class="form-control" type='text' id='model'
+                                        placeholder="Ejem. Grand Marquiz" />
+                                </div>
+                                <div class="d-inline col-lg-3">
+                                    <strong>Año</strong>
+                                    <input class="form-control" type='number' id='year' placeholder="Ejem. 1982" />
+                                </div>
+                                <div class="d-inline col-lg-3">
+                                    <strong>Precio</strong>
+                                    <input class="form-control" type='number' id='price' placeholder="Ejem. 160000" />
+                                </div>
+                            </div>
+
+                            <br />
+
+                            <input type='button' class="btn btn-success" onclick='add()' value='Agregar' />
+
+                        </form>
+
+                    </div>
                 </div>
-                <div class="card-body text-center">
 
-                    <form name='myForm'>
-                        <div class="row">
-                            <div class="d-inline col-lg-3">
-                                <strong>Marca</strong>
-                                <input class="form-control" type='text' id='brand' placeholder="Ejem. Ford" />
-                            </div>
-                            <div class="d-inline col-lg-3">
-                                <strong>Modelo</strong>
-                                <input class="form-control" type='text' id='model' placeholder="Ejem. Grand Marquiz" />
-                            </div>
-                            <div class="d-inline col-lg-3">
-                                <strong>Año</strong>
-                                <input class="form-control" type='number' id='year' placeholder="Ejem. 1982" />
-                            </div>
-                            <div class="d-inline col-lg-3">
-                                <strong>Precio</strong>
-                                <input class="form-control" type='number' id='price' placeholder="Ejem. 160000" />
-                            </div>
-                        </div>
 
-                        <br />
-
-                        <input type='button' class="btn btn-success" onclick='ajaxFunction()' value='Agregar' />
-
-                    </form>
-
-                </div>
+                <div id='ajaxDiv' class="mt-5"></div>
             </div>
 
-
-            <div id='ajaxDiv'  class="mt-5"></div>
-        </div>
-        
 </body>
 
 </html>
